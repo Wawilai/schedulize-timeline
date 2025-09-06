@@ -45,14 +45,14 @@ const AppointmentBlock: React.FC<AppointmentBlockProps> = ({
 
   return (
     <div
-      className={`absolute h-[60px] top-[10px] rounded-sm p-2 text-xs overflow-hidden shadow-sm cursor-grab active:cursor-grabbing z-[2] ${getStatusClass(appointment.status)}`}
+      className={`absolute h-[60px] top-[10px] rounded-lg p-3 text-xs overflow-hidden shadow-md cursor-grab active:cursor-grabbing z-[2] transition-all hover:shadow-lg hover:scale-[1.02] ${getStatusClass(appointment.status)}`}
       style={{ left: `${left}px`, width: `${width}px` }}
       draggable
       onDragStart={handleDragStart}
     >
-      <p className="font-bold truncate">{appointment.title}</p>
-      <p className="truncate text-xs">{appointment.status}</p>
-      <p className="truncate text-xs opacity-70">
+      <p className="font-bold truncate text-sm">{appointment.title}</p>
+      <p className="truncate text-xs font-medium mt-1">{appointment.status}</p>
+      <p className="truncate text-xs opacity-80 mt-1">
         {appointment.startTime} - {appointment.endTime}
       </p>
     </div>

@@ -7,71 +7,72 @@
 
 @layer base {
   :root {
-    --background: 241 245 249;
-    --foreground: 51 65 85;
+    --background: 0 0% 98%;
+    --foreground: 215 25% 27%;
 
     --card: 0 0% 100%;
-    --card-foreground: 51 65 85;
+    --card-foreground: 215 25% 27%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 51 65 85;
+    --popover-foreground: 215 25% 27%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 210 100% 50%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 210 40% 98%;
+    --secondary-foreground: 215 25% 27%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 210 40% 98%;
+    --muted-foreground: 215 16% 57%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 210 40% 98%;
+    --accent-foreground: 215 25% 27%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 215 16% 92%;
+    --input: 215 16% 92%;
+    --ring: 210 100% 50%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    /* Schedule-specific colors */
-    --sidebar-dark: 203 24% 16%;
-    --sidebar-darker: 215 28% 17%;
-    --sidebar-light: 210 40% 95%;
-    --sidebar-text: 215 20% 65%;
+    /* Clean light theme colors */
+    --sidebar-dark: 0 0% 100%;
+    --sidebar-darker: 210 20% 98%;
+    --sidebar-light: 215 25% 27%;
+    --sidebar-text: 215 16% 57%;
     
-    /* Appointment status colors */
-    --scheduled: 217 91% 60%;
-    --scheduled-bg: 214 95% 93%;
-    --scheduled-text: 213 94% 68%;
+    /* Fresh appointment status colors */
+    --scheduled: 213 94% 68%;
+    --scheduled-bg: 213 100% 97%;
+    --scheduled-text: 213 94% 40%;
     
-    --completed: 142 76% 36%;
-    --completed-bg: 138 76% 97%;
-    --completed-text: 142 71% 45%;
+    --completed: 142 71% 45%;
+    --completed-bg: 142 76% 96%;
+    --completed-text: 142 71% 35%;
     
-    --traveling: 271 81% 56%;
-    --traveling-bg: 270 100% 98%;
-    --traveling-text: 271 91% 65%;
+    --traveling: 271 91% 65%;
+    --traveling-bg: 271 100% 97%;
+    --traveling-text: 271 91% 50%;
     
-    --proposed: 220 9% 46%;
-    --proposed-bg: 210 20% 98%;
-    --proposed-text: 215 16% 47%;
+    --proposed: 215 16% 57%;
+    --proposed-bg: 215 16% 97%;
+    --proposed-text: 215 25% 40%;
 
     /* Live time indicator */
-    --current-time: 0 84% 60%;
-    --past-overlay: 220 13% 18%;
+    --current-time: 339 82% 52%;
+    --past-overlay: 215 16% 57%;
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Sidebar tokens */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 215 25% 27%;
+    --sidebar-primary: 210 100% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 40% 98%;
+    --sidebar-accent-foreground: 215 25% 27%;
+    --sidebar-border: 215 16% 92%;
+    --sidebar-ring: 210 100% 50%;
   }
 
   .dark {
@@ -179,7 +180,6 @@
     background: hsl(var(--sidebar-darker));
   }
 
-  /* Drag states */
   .dragging {
     opacity: 0.5;
     transform: scale(0.98);
@@ -187,6 +187,7 @@
   
   .row-highlight {
     background: hsl(var(--scheduled-bg));
+    border-color: hsl(var(--scheduled) / 0.3);
   }
 
   /* Timeline grid */
@@ -217,8 +218,8 @@
   }
   
   .past-time-overlay {
-    background: hsl(var(--past-overlay) / 0.1);
-    border-right: 1px dashed hsl(var(--past-overlay) / 0.4);
+    background: hsl(var(--past-overlay) / 0.05);
+    border-right: 1px dashed hsl(var(--past-overlay) / 0.2);
   }
 
   /* Sticky positioning */

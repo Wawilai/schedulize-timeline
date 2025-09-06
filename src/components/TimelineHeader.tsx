@@ -25,9 +25,9 @@ const TimelineHeader: React.FC<TimelineHeaderProps> = ({
     const left = (t - startTime) * pixelsPerMinute;
     
     let borderClass = '';
-    if (isHour) borderClass = 'border-l border-slate-400';
-    else if (isHalfHour) borderClass = 'border-l border-slate-300';
-    else borderClass = 'border-l border-slate-200';
+    if (isHour) borderClass = 'border-l border-muted-foreground/40';
+    else if (isHalfHour) borderClass = 'border-l border-muted-foreground/25';
+    else borderClass = 'border-l border-border';
 
     const showLabel = t % labelStep === 0 || (timeScale === 15 && isHalfHour);
     
@@ -40,8 +40,8 @@ const TimelineHeader: React.FC<TimelineHeaderProps> = ({
         {showLabel && (
           <span className={`absolute top-2 left-2 ${
             isHour 
-              ? 'text-sm font-semibold text-slate-600' 
-              : 'text-xs text-slate-500'
+              ? 'text-sm font-bold text-foreground' 
+              : 'text-xs font-medium text-muted-foreground'
           }`}>
             {minutesToTime(t)}
           </span>
@@ -52,7 +52,7 @@ const TimelineHeader: React.FC<TimelineHeaderProps> = ({
 
   return (
     <div
-      className="sticky-header relative h-[40px] bg-white border-b border-slate-200"
+      className="sticky-header relative h-[40px] bg-white border-b border-border shadow-sm"
       style={{ width: `${width}px` }}
     >
       {timeLines}

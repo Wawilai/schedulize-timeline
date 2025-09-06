@@ -91,7 +91,7 @@ const ScheduleGrid: React.FC<ScheduleGridProps> = ({
         style={{ gridTemplateColumns: `${resourceColumnWidth}px 1fr` }}
       >
         {/* Corner block */}
-        <div className="sticky-corner w-[240px] h-[40px] bg-white border-b border-r border-slate-200" />
+        <div className="sticky-corner w-[240px] h-[40px] bg-white border-b border-r border-border shadow-sm" />
         
         {/* Timeline header */}
         <TimelineHeader
@@ -106,18 +106,18 @@ const ScheduleGrid: React.FC<ScheduleGridProps> = ({
         {employees.map((employee) => (
           <React.Fragment key={employee.id}>
             {/* Resource header */}
-            <div className="sticky-column flex items-center p-3 h-[80px] bg-white border-b border-r border-slate-200">
+            <div className="sticky-column flex items-center p-4 h-[80px] bg-white border-b border-r border-border shadow-sm">
               <img
                 src={employee.avatar}
                 alt={employee.name}
-                className="w-10 h-10 rounded-full mr-3"
+                className="w-10 h-10 rounded-full mr-3 border-2 border-border"
               />
-              <span className="font-semibold">{employee.name}</span>
+              <span className="font-semibold text-foreground">{employee.name}</span>
             </div>
             
             {/* Timeline row */}
             <div
-              className="relative h-[80px] border-b border-slate-200 timeline-grid"
+              className="relative h-[80px] border-b border-border timeline-grid bg-white/50"
               style={{
                 '--grid-size': `${timeScale * pixelsPerMinute}px`,
                 width: `${timelineTotalWidth}px`

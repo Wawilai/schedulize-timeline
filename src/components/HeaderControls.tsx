@@ -44,35 +44,35 @@ const HeaderControls: React.FC<HeaderControlsProps> = ({
   };
 
   return (
-    <header className="bg-white border-b border-slate-200 p-3 flex items-center justify-between z-20 flex-shrink-0">
+    <header className="bg-white border-b border-border p-4 flex items-center justify-between z-20 flex-shrink-0 shadow-sm">
       <div className="flex items-center justify-between w-full">
-        <div className="flex items-center space-x-1 border-r pr-4">
+        <div className="flex items-center space-x-2 border-r border-border pr-6">
           <button
             onClick={handlePrevDay}
-            className="p-2 rounded hover:bg-slate-100 text-slate-500"
+            className="p-2 rounded-lg hover:bg-accent text-muted-foreground hover:text-primary transition-colors"
           >
             <i className="fas fa-chevron-left fa-sm"></i>
           </button>
-          <p className="text-sm font-semibold text-slate-700 w-48 text-center">
+          <p className="text-base font-bold text-foreground w-52 text-center">
             {formatDateThai(currentDate)}
           </p>
           <button
             onClick={handleNextDay}
-            className="p-2 rounded hover:bg-slate-100 text-slate-500"
+            className="p-2 rounded-lg hover:bg-accent text-muted-foreground hover:text-primary transition-colors"
           >
             <i className="fas fa-chevron-right fa-sm"></i>
           </button>
         </div>
         
-        <div className="flex items-center space-x-2">
-          <label htmlFor="building-filter" className="text-sm font-medium text-slate-600">
+        <div className="flex items-center space-x-3">
+          <label htmlFor="building-filter" className="text-sm font-semibold text-foreground">
             อาคาร:
           </label>
           <select
             id="building-filter"
             value={selectedBuilding}
             onChange={(e) => onBuildingFilterChange(e.target.value)}
-            className="w-32 rounded border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm py-1"
+            className="px-3 py-2 rounded-lg border border-border bg-white shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20 text-sm transition-colors"
           >
             <option value="all">ทั้งหมด</option>
             {buildings.map(building => (
@@ -84,25 +84,25 @@ const HeaderControls: React.FC<HeaderControlsProps> = ({
         </div>
         
         <div className="relative">
-          <i className="fas fa-search text-slate-400 absolute top-1/2 left-2 -translate-y-1/2"></i>
+          <i className="fas fa-search text-muted-foreground absolute top-1/2 left-3 -translate-y-1/2"></i>
           <input
             type="text"
             value={employeeSearch}
             onChange={(e) => onEmployeeSearchChange(e.target.value)}
             placeholder="ค้นหาพนักงาน..."
-            className="w-40 rounded border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm py-1 pl-8"
+            className="w-44 pl-10 pr-4 py-2 rounded-lg border border-border bg-white shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20 text-sm transition-colors"
           />
         </div>
         
-        <div className="flex items-center space-x-2 border-l pl-4">
-          <label htmlFor="time-scale" className="text-sm font-medium text-slate-600">
+        <div className="flex items-center space-x-3 border-l border-border pl-6">
+          <label htmlFor="time-scale" className="text-sm font-semibold text-foreground">
             มุมมอง:
           </label>
           <select
             id="time-scale"
             value={timeScale}
             onChange={(e) => onTimeScaleChange(parseInt(e.target.value))}
-            className="rounded border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm py-1"
+            className="px-3 py-2 rounded-lg border border-border bg-white shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20 text-sm transition-colors"
           >
             {timeScaleOptions.map(option => (
               <option key={option.value} value={option.value}>
