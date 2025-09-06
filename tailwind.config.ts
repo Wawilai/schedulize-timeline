@@ -13,6 +13,9 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        'sarabun': ['Sarabun', 'system-ui', 'sans-serif'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -56,6 +59,26 @@ export default {
           "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
+          dark: "hsl(var(--sidebar-dark))",
+          darker: "hsl(var(--sidebar-darker))",
+          light: "hsl(var(--sidebar-light))",
+          text: "hsl(var(--sidebar-text))",
+        },
+        schedule: {
+          scheduled: "hsl(var(--scheduled))",
+          "scheduled-bg": "hsl(var(--scheduled-bg))",
+          "scheduled-text": "hsl(var(--scheduled-text))",
+          completed: "hsl(var(--completed))",
+          "completed-bg": "hsl(var(--completed-bg))",
+          "completed-text": "hsl(var(--completed-text))",
+          traveling: "hsl(var(--traveling))",
+          "traveling-bg": "hsl(var(--traveling-bg))",
+          "traveling-text": "hsl(var(--traveling-text))",
+          proposed: "hsl(var(--proposed))",
+          "proposed-bg": "hsl(var(--proposed-bg))",
+          "proposed-text": "hsl(var(--proposed-text))",
+          "current-time": "hsl(var(--current-time))",
+          "past-overlay": "hsl(var(--past-overlay))",
         },
       },
       borderRadius: {
