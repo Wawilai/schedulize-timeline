@@ -11,6 +11,7 @@ interface ScheduleGridProps {
   currentDate: Date;
   onAppointmentDrop: (appointmentId: number | string, employeeId: string, startTime: string, duration: number) => void;
   onAppointmentDragStart: (appointment: Appointment) => void;
+  onAddAppointmentData?: (appointmentId: number) => void;
 }
 
 const ScheduleGrid: React.FC<ScheduleGridProps> = ({
@@ -19,7 +20,8 @@ const ScheduleGrid: React.FC<ScheduleGridProps> = ({
   timeScale,
   currentDate,
   onAppointmentDrop,
-  onAppointmentDragStart
+  onAppointmentDragStart,
+  onAddAppointmentData
 }) => {
   const gridRef = useRef<HTMLDivElement>(null);
   const startTime = 8 * 60; // 08:00 in minutes
@@ -106,7 +108,7 @@ const ScheduleGrid: React.FC<ScheduleGridProps> = ({
         {employees.map((employee) => (
           <React.Fragment key={employee.id}>
             {/* Resource header */}
-            <div className="sticky-column flex items-center p-4 h-[80px] bg-white border-b border-r border-border shadow-sm">
+            <div className="sticky-column flex items-center p-4 h-[130px] bg-white border-b border-r border-border shadow-sm">
               <img
                 src={employee.avatar}
                 alt={employee.name}
@@ -117,7 +119,7 @@ const ScheduleGrid: React.FC<ScheduleGridProps> = ({
             
             {/* Timeline row */}
             <div
-              className="relative h-[80px] border-b border-border timeline-grid bg-white/50"
+              className="relative h-[130px] border-b border-border timeline-grid bg-white/50"
               style={{
                 '--grid-size': `${timeScale * pixelsPerMinute}px`,
                 width: `${timelineTotalWidth}px`
@@ -134,6 +136,7 @@ const ScheduleGrid: React.FC<ScheduleGridProps> = ({
                     startTime={startTime}
                     pixelsPerMinute={pixelsPerMinute}
                     onDragStart={() => onAppointmentDragStart(appointment)}
+                    onAddData={onAddAppointmentData}
                   />
                 ))}
             </div>

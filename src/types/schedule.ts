@@ -17,6 +17,10 @@ export interface Appointment {
   startTime: string;
   endTime: string;
   status: 'Scheduled' | 'Completed' | 'Traveling' | 'Proposed';
+  customerLevel?: 'VIP' | 'Silver' | 'Gold' | 'Platinum';
+  customerName?: string;
+  service?: string;
+  notes?: string;
 }
 
 export interface UnscheduledItem {

@@ -96,6 +96,12 @@ const ScheduleBoard = () => {
     });
   };
 
+  const handleAddAppointmentData = (appointmentId: number) => {
+    // TODO: Implement appointment data editing modal
+    console.log('เพิ่มข้อมูลให้การนัดหมาย ID:', appointmentId);
+    alert(`เพิ่มข้อมูลให้การนัดหมาย ID: ${appointmentId}`);
+  };
+
   return (
     <div className="font-sarabun antialiased flex h-screen">
       <Sidebar />
@@ -115,14 +121,15 @@ const ScheduleBoard = () => {
           onEmployeeSearchChange={setEmployeeSearch}
         />
         
-        <ScheduleGrid
-          employees={filteredEmployees}
-          appointments={appointments}
-          timeScale={timeScale}
-          currentDate={currentDate}
-          onAppointmentDrop={handleAppointmentDrop}
-          onAppointmentDragStart={handleAppointmentDragStart}
-        />
+          <ScheduleGrid
+            employees={filteredEmployees}
+            appointments={appointments}
+            timeScale={timeScale}
+            currentDate={currentDate}
+            onAppointmentDrop={handleAppointmentDrop}
+            onAppointmentDragStart={handleAppointmentDragStart}
+            onAddAppointmentData={handleAddAppointmentData}
+          />
         
         <UnscheduledPanel
           items={unscheduledItems}

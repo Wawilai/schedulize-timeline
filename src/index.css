@@ -178,6 +178,23 @@
     color: hsl(var(--proposed-text));
   }
 
+  /* Customer level styles */
+  .customer-vip {
+    @apply bg-gradient-to-r from-purple-100 to-pink-100 border-l-4 border-purple-600 text-purple-800;
+  }
+
+  .customer-platinum {
+    @apply bg-gradient-to-r from-gray-100 to-blue-100 border-l-4 border-gray-600 text-gray-800;
+  }
+
+  .customer-gold {
+    @apply bg-gradient-to-r from-yellow-100 to-orange-100 border-l-4 border-yellow-600 text-yellow-800;
+  }
+
+  .customer-silver {
+    @apply bg-gradient-to-r from-gray-50 to-slate-100 border-l-4 border-gray-500 text-gray-700;
+  }
+
   /* Sidebar styles */
   .sidebar-dark {
     background: hsl(var(--sidebar-dark));
