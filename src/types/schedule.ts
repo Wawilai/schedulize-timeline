@@ -32,6 +32,7 @@ export interface UnscheduledItem {
   title: string;
   duration: number;
   priority: 'Normal' | 'High';
+  description?: string;
 }
 
 export interface ScheduleState {

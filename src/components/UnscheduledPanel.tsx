@@ -1,7 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { UnscheduledItem } from '@/types/schedule';
 import { Input } from '@/components/ui/input';
-import { Search } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Search, Eye } from 'lucide-react';
 
 interface UnscheduledPanelProps {
   items: UnscheduledItem[];
@@ -47,17 +49,62 @@ const UnscheduledPanel: React.FC<UnscheduledPanelProps> = ({ items, onDragStart 
             onDragStart={(e) => handleDragStart(e, item)}
             className="bg-card border border-border p-3 rounded-lg cursor-grab active:cursor-grabbing flex justify-between items-center hover:shadow-md hover:border-primary/20 transition-all group"
           >
-            <div>
+            <div className="flex-1">
               <p className="font-semibold text-foreground group-hover:text-primary transition-colors">{item.title}</p>
               <p className="text-sm text-muted-foreground">{item.duration} นาที</p>
             </div>
-            <span className={`text-sm font-bold px-2 py-1 rounded-full ${
-              item.priority === 'High' 
-                ? 'bg-destructive/10 text-destructive' 
-                : 'bg-muted text-muted-foreground'
-            }`}>
-              {item.priority}
-            </span>
+            <div className="flex items-center gap-2">
+              <span className={`text-sm font-bold px-2 py-1 rounded-full ${
+                item.priority === 'High' 
+                  ? 'bg-destructive/10 text-destructive' 
+                  : 'bg-muted text-muted-foreground'
+              }`}>
+                {item.priority}
+              </span>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="opacity-0 group-hover:opacity-100 transition-opacity p-1 h-6 w-6 hover:bg-primary/10"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Eye className="h-3 w-3" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>รายละเอียดรายการ</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4 py-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-foreground">ชื่อรายการ</label>
+                      <p className="text-sm text-muted-foreground bg-muted/50 p-2 rounded">{item.title}</p>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-foreground">ระยะเวลา</label>
+                      <p className="text-sm text-muted-foreground bg-muted/50 p-2 rounded">{item.duration} นาที</p>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-foreground">ระดับความสำคัญ</label>
+                      <span className={`inline-block text-sm font-bold px-3 py-1 rounded-full ${
+                        item.priority === 'High' 
+                          ? 'bg-destructive/10 text-destructive' 
+                          : 'bg-muted text-muted-foreground'
+                      }`}>
+                        {item.priority}
+                      </span>
+                    </div>
+                    {item.description && (
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-foreground">รายละเอียด</label>
+                        <p className="text-sm text-muted-foreground bg-muted/50 p-2 rounded">{item.description}</p>
+                      </div>
+                    )}
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
           </div>
         ))}
       </div>
