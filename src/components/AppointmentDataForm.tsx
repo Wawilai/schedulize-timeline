@@ -251,7 +251,7 @@ const AppointmentDataForm: React.FC<AppointmentDataFormProps> = ({
               </Button>
               <Button 
                 type="submit"
-                className="min-w-[100px] bg-gradient-primary"
+                className="min-w-[100px] bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground shadow-lg"
               >
                 บันทึก
               </Button>
