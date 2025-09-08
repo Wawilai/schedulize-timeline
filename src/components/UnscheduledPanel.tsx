@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { UnscheduledItem } from '@/types/schedule';
+import { Input } from '@/components/ui/input';
+import { Search } from 'lucide-react';
 
 interface UnscheduledPanelProps {
   items: UnscheduledItem[];
@@ -7,6 +9,15 @@ interface UnscheduledPanelProps {
 }
 
 const UnscheduledPanel: React.FC<UnscheduledPanelProps> = ({ items, onDragStart }) => {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredItems = useMemo(() => {
+    if (!searchTerm) return items;
+    return items.filter(item => 
+      item.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [items, searchTerm]);
+
   const handleDragStart = (e: React.DragEvent, item: UnscheduledItem) => {
     e.dataTransfer.setData('application/json', JSON.stringify({ ...item, origin: 'unscheduled' }));
     onDragStart(item);
@@ -15,10 +26,21 @@ const UnscheduledPanel: React.FC<UnscheduledPanelProps> = ({ items, onDragStart 
   return (
     <footer className="bg-white border-t border-border h-[250px] flex flex-col flex-shrink-0 shadow-sm">
       <div className="p-4 border-b border-border bg-accent/30">
-        <h3 className="font-bold text-foreground text-base">รายการที่ยังไม่จัดตาราง</h3>
+        <div className="flex items-center justify-between gap-3 mb-2">
+          <h3 className="font-bold text-foreground text-base">รายการที่ยังไม่จัดตาราง</h3>
+        </div>
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+          <Input
+            placeholder="ค้นหารายการ..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10 h-8 text-sm"
+          />
+        </div>
       </div>
       <div className="p-4 space-y-3 overflow-y-auto custom-scrollbar">
-        {items.map((item) => (
+        {filteredItems.map((item) => (
           <div
             key={item.id}
             draggable
