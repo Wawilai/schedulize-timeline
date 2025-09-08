@@ -21,6 +21,10 @@ export interface Appointment {
   customerName?: string;
   service?: string;
   notes?: string;
+  customerPhone?: string;
+  customerEmail?: string;
+  serviceDetails?: string;
+  price?: string;
 }
 
 export interface UnscheduledItem {

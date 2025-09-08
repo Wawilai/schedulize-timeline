@@ -4,9 +4,11 @@ import TopBar from './TopBar';
 import HeaderControls from './HeaderControls';
 import ScheduleGrid from './ScheduleGrid';
 import UnscheduledPanel from './UnscheduledPanel';
+import AppointmentDataForm from './AppointmentDataForm';
 import { Building, Employee, Appointment, UnscheduledItem, DraggedItem } from '@/types/schedule';
 import { mockBuildings, mockEmployees, mockAppointments, mockUnscheduled } from '@/data/mockData';
 import { minutesToTime, timeToMinutes } from '@/utils/timeUtils';
+import { useToast } from '@/hooks/use-toast';
 
 const ScheduleBoard = () => {
   const [currentDate, setCurrentDate] = useState(new Date(2025, 8, 6)); // September 6, 2025
@@ -16,6 +18,9 @@ const ScheduleBoard = () => {
   const [appointments, setAppointments] = useState<Appointment[]>(mockAppointments);
   const [unscheduledItems, setUnscheduledItems] = useState<UnscheduledItem[]>(mockUnscheduled);
   const [draggedItem, setDraggedItem] = useState<DraggedItem | null>(null);
+  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const { toast } = useToast();
 
   // Filter employees based on building and search
   const filteredEmployees = useMemo(() => {
@@ -97,9 +102,41 @@ const ScheduleBoard = () => {
   };
 
   const handleAddAppointmentData = (appointmentId: number) => {
-    // TODO: Implement appointment data editing modal
-    console.log('เพิ่มข้อมูลให้การนัดหมาย ID:', appointmentId);
-    alert(`เพิ่มข้อมูลให้การนัดหมาย ID: ${appointmentId}`);
+    const appointment = appointments.find(apt => apt.id === appointmentId);
+    if (appointment) {
+      setSelectedAppointment(appointment);
+      setIsFormOpen(true);
+    }
+  };
+
+  const handleSaveAppointmentData = (appointmentId: number, data: any) => {
+    setAppointments(prev => 
+      prev.map(apt => 
+        apt.id === appointmentId
+          ? { 
+              ...apt, 
+              customerName: data.customerName,
+              customerPhone: data.customerPhone,
+              customerEmail: data.customerEmail,
+              service: data.service,
+              serviceDetails: data.serviceDetails,
+              customerLevel: data.customerLevel,
+              notes: data.notes,
+              price: data.price,
+            }
+          : apt
+      )
+    );
+    
+    toast({
+      title: "บันทึกข้อมูลสำเร็จ",
+      description: "ข้อมูลการให้บริการลูกค้าถูกบันทึกเรียบร้อยแล้ว",
+    });
+  };
+
+  const handleCloseForm = () => {
+    setIsFormOpen(false);
+    setSelectedAppointment(null);
   };
 
   return (
@@ -136,6 +173,13 @@ const ScheduleBoard = () => {
           onDragStart={handleUnscheduledDragStart}
         />
       </div>
+
+      <AppointmentDataForm
+        isOpen={isFormOpen}
+        onClose={handleCloseForm}
+        appointment={selectedAppointment}
+        onSave={handleSaveAppointmentData}
+      />
     </div>
   );
 };
