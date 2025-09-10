@@ -67,8 +67,53 @@ const AppointmentBlock: React.FC<AppointmentBlockProps> = ({
   const handleDragStart = (e: React.DragEvent) => {
     const duration = endMinutes - startMinutes;
     const data = { ...appointment, duration, origin: 'calendar' };
+    
+    // Set drag data
     e.dataTransfer.setData('application/json', JSON.stringify(data));
+    e.dataTransfer.effectAllowed = 'move';
+    
+    // Create a custom drag image with better visibility
+    const dragImage = document.createElement('div');
+    dragImage.innerHTML = `
+      <div style="
+        background: rgba(59, 130, 246, 0.9);
+        color: white;
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        transform: rotate(-2deg);
+        border: 2px solid rgba(255,255,255,0.3);
+      ">
+        📅 ${appointment.title}<br>
+        ⏱️ ${duration} นาที
+      </div>
+    `;
+    
+    dragImage.style.position = 'absolute';
+    dragImage.style.top = '-1000px';
+    dragImage.style.left = '-1000px';
+    document.body.appendChild(dragImage);
+    
+    e.dataTransfer.setDragImage(dragImage, 60, 20);
+    
+    // Clean up drag image after drag starts
+    setTimeout(() => {
+      document.body.removeChild(dragImage);
+    }, 0);
+    
+    // Add dragging class to original element
+    const target = e.currentTarget as HTMLElement;
+    target.classList.add('dragging');
+    
     onDragStart();
+  };
+
+  const handleDragEnd = (e: React.DragEvent) => {
+    // Remove dragging class
+    const target = e.currentTarget as HTMLElement;
+    target.classList.remove('dragging');
   };
 
   const handleAddData = (e: React.MouseEvent) => {
@@ -85,6 +130,7 @@ const AppointmentBlock: React.FC<AppointmentBlockProps> = ({
       style={{ left: `${left}px`, width: `${width}px` }}
       draggable
       onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
     >
       <div className="flex justify-between items-start mb-1">
         <div className="flex-1 min-w-0">

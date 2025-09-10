@@ -31,12 +31,27 @@ const ScheduleGrid: React.FC<ScheduleGridProps> = ({
   const resourceColumnWidth = 240;
   const rowHeight = 80;
 
-  const handleDragOver = (e: React.DragEvent) => {
+  const handleDragOver = (e: React.DragEvent, employeeId: string) => {
     e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    
+    // Add visual feedback for drop zone
+    const target = e.currentTarget as HTMLElement;
+    target.classList.add('drag-over');
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    // Remove visual feedback when leaving drop zone
+    const target = e.currentTarget as HTMLElement;
+    target.classList.remove('drag-over');
   };
 
   const handleDrop = (e: React.DragEvent, employeeId: string) => {
     e.preventDefault();
+    
+    // Remove visual feedback
+    const target = e.currentTarget as HTMLElement;
+    target.classList.remove('drag-over');
     
     const data = e.dataTransfer.getData('application/json');
     if (!data) return;
@@ -45,13 +60,19 @@ const ScheduleGrid: React.FC<ScheduleGridProps> = ({
     const rect = e.currentTarget.getBoundingClientRect();
     const offsetX = e.clientX - rect.left + (gridRef.current?.scrollLeft || 0);
     
-    // Snap to time grid
-    const timeStep = timeScale;
+    // Improved snap to grid calculation
+    const timeStep = Math.max(15, timeScale); // Minimum 15-minute steps for better accuracy
     const snapWidth = timeStep * pixelsPerMinute;
-    const snappedLeft = Math.floor(Math.max(0, offsetX) / snapWidth) * snapWidth;
+    
+    // Calculate snapped position with better precision
+    const adjustedOffsetX = Math.max(0, offsetX - 10); // Account for drag offset
+    const snappedLeft = Math.round(adjustedOffsetX / snapWidth) * snapWidth;
     const startMins = startTime + (snappedLeft / pixelsPerMinute);
     
-    onAppointmentDrop(draggedItem.id, employeeId, minutesToTime(startMins), draggedItem.duration);
+    // Ensure the time is within bounds
+    const clampedStartMins = Math.max(startTime, Math.min(endTime - draggedItem.duration, startMins));
+    
+    onAppointmentDrop(draggedItem.id, employeeId, minutesToTime(clampedStartMins), draggedItem.duration);
   };
 
   // Current time indicator
@@ -119,12 +140,13 @@ const ScheduleGrid: React.FC<ScheduleGridProps> = ({
             
             {/* Timeline row */}
             <div
-              className="relative h-[130px] border-b border-border timeline-grid bg-white/50"
+              className="relative h-[130px] border-b border-border timeline-grid bg-white/50 transition-colors duration-200"
               style={{
-                '--grid-size': `${timeScale * pixelsPerMinute}px`,
+                '--grid-size': `${Math.max(15, timeScale) * pixelsPerMinute}px`,
                 width: `${timelineTotalWidth}px`
               } as React.CSSProperties}
-              onDragOver={handleDragOver}
+              onDragOver={(e) => handleDragOver(e, employee.id)}
+              onDragLeave={handleDragLeave}
               onDrop={(e) => handleDrop(e, employee.id)}
             >
               {appointments
