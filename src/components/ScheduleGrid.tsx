@@ -41,6 +41,26 @@ const ScheduleGrid: React.FC<ScheduleGridProps> = ({
   const resourceColumnWidth = 240;
   const rowHeight = 130;
 
+  // Calculate snap position utility function
+  const calculateSnapPosition = (clientX: number, rect: DOMRect) => {
+    const scrollLeft = gridRef.current?.scrollLeft || 0;
+    const rawOffsetX = clientX - rect.left + scrollLeft;
+    
+    // Improved snap calculation
+    const timeStep = Math.max(15, timeScale);
+    const snapWidth = timeStep * pixelsPerMinute;
+    
+    // More precise snapping with proper offset handling
+    const adjustedOffsetX = Math.max(0, rawOffsetX);
+    const snappedLeft = Math.round(adjustedOffsetX / snapWidth) * snapWidth;
+    
+    return {
+      snappedLeft,
+      startMinutes: startTime + (snappedLeft / pixelsPerMinute),
+      snapWidth
+    };
+  };
+
   const handleDragOver = (e: React.DragEvent, employeeId: string) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
@@ -49,20 +69,15 @@ const ScheduleGrid: React.FC<ScheduleGridProps> = ({
     const target = e.currentTarget as HTMLElement;
     target.classList.add('drag-over');
     
-    // Show ghost preview
+    // Show ghost preview with consistent calculation
     const data = e.dataTransfer.getData('application/json');
     if (data) {
       try {
         const draggedItem = JSON.parse(data);
         const rect = e.currentTarget.getBoundingClientRect();
-        const offsetX = e.clientX - rect.left + (gridRef.current?.scrollLeft || 0);
         
-        // Calculate ghost position with snap
-        const timeStep = Math.max(15, timeScale);
-        const snapWidth = timeStep * pixelsPerMinute;
-        const adjustedOffsetX = Math.max(0, offsetX - 10);
-        const snappedLeft = Math.round(adjustedOffsetX / snapWidth) * snapWidth;
-        const width = draggedItem.duration * pixelsPerMinute;
+        const { snappedLeft } = calculateSnapPosition(e.clientX, rect);
+        const width = Math.max(draggedItem.duration * pixelsPerMinute, 60); // Minimum width
         
         // Find employee row index
         const rowIndex = employees.findIndex(emp => emp.id === employeeId);
@@ -71,13 +86,13 @@ const ScheduleGrid: React.FC<ScheduleGridProps> = ({
           show: true,
           employeeId,
           left: snappedLeft,
-          width: Math.max(width, 60), // Minimum width
+          width,
           title: draggedItem.title,
           duration: draggedItem.duration,
           rowIndex
         });
       } catch (error) {
-        // Ignore JSON parse errors
+        console.error('Error parsing drag data:', error);
       }
     }
   };
@@ -104,23 +119,29 @@ const ScheduleGrid: React.FC<ScheduleGridProps> = ({
     const data = e.dataTransfer.getData('application/json');
     if (!data) return;
     
-    const draggedItem = JSON.parse(data);
-    const rect = e.currentTarget.getBoundingClientRect();
-    const offsetX = e.clientX - rect.left + (gridRef.current?.scrollLeft || 0);
-    
-    // Improved snap to grid calculation
-    const timeStep = Math.max(15, timeScale); // Minimum 15-minute steps for better accuracy
-    const snapWidth = timeStep * pixelsPerMinute;
-    
-    // Calculate snapped position with better precision
-    const adjustedOffsetX = Math.max(0, offsetX - 10); // Account for drag offset
-    const snappedLeft = Math.round(adjustedOffsetX / snapWidth) * snapWidth;
-    const startMins = startTime + (snappedLeft / pixelsPerMinute);
-    
-    // Ensure the time is within bounds
-    const clampedStartMins = Math.max(startTime, Math.min(endTime - draggedItem.duration, startMins));
-    
-    onAppointmentDrop(draggedItem.id, employeeId, minutesToTime(clampedStartMins), draggedItem.duration);
+    try {
+      const draggedItem = JSON.parse(data);
+      const rect = e.currentTarget.getBoundingClientRect();
+      
+      // Use the same calculation as ghost preview for consistency
+      const { startMinutes } = calculateSnapPosition(e.clientX, rect);
+      
+      // Ensure the time is within bounds
+      const maxStartTime = endTime - draggedItem.duration;
+      const clampedStartMins = Math.max(startTime, Math.min(maxStartTime, startMinutes));
+      
+      console.log('Drop position:', {
+        clientX: e.clientX,
+        rectLeft: rect.left,
+        scrollLeft: gridRef.current?.scrollLeft || 0,
+        calculatedStart: minutesToTime(clampedStartMins),
+        duration: draggedItem.duration
+      });
+      
+      onAppointmentDrop(draggedItem.id, employeeId, minutesToTime(clampedStartMins), draggedItem.duration);
+    } catch (error) {
+      console.error('Error handling drop:', error);
+    }
   };
 
   // Current time indicator
