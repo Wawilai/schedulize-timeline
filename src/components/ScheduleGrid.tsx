@@ -42,17 +42,19 @@ const ScheduleGrid: React.FC<ScheduleGridProps> = ({
   const rowHeight = 130;
 
   // Calculate snap position utility function
-  const calculateSnapPosition = (clientX: number, rect: DOMRect) => {
+  const calculateSnapPosition = (clientX: number) => {
     const scrollLeft = gridRef.current?.scrollLeft || 0;
-    const rawOffsetX = clientX - rect.left + scrollLeft;
     
-    // Improved snap calculation
+    // Calculate position on timeline (account for resource column and scroll)
+    const timelineMouseX = clientX - resourceColumnWidth + scrollLeft;
+    
+    // Snap calculation
     const timeStep = Math.max(15, timeScale);
     const snapWidth = timeStep * pixelsPerMinute;
     
-    // More precise snapping with proper offset handling
-    const adjustedOffsetX = Math.max(0, rawOffsetX);
-    const snappedLeft = Math.round(adjustedOffsetX / snapWidth) * snapWidth;
+    // Ensure position is within timeline bounds
+    const clampedX = Math.max(0, Math.min(timelineMouseX, timelineTotalWidth - snapWidth));
+    const snappedLeft = Math.round(clampedX / snapWidth) * snapWidth;
     
     return {
       snappedLeft,
@@ -76,7 +78,7 @@ const ScheduleGrid: React.FC<ScheduleGridProps> = ({
         const draggedItem = JSON.parse(data);
         const rect = e.currentTarget.getBoundingClientRect();
         
-        const { snappedLeft } = calculateSnapPosition(e.clientX, rect);
+        const { snappedLeft } = calculateSnapPosition(e.clientX);
         const width = Math.max(draggedItem.duration * pixelsPerMinute, 60); // Minimum width
         
         // Find employee row index
@@ -124,7 +126,7 @@ const ScheduleGrid: React.FC<ScheduleGridProps> = ({
       const rect = e.currentTarget.getBoundingClientRect();
       
       // Use the same calculation as ghost preview for consistency
-      const { startMinutes } = calculateSnapPosition(e.clientX, rect);
+      const { startMinutes } = calculateSnapPosition(e.clientX);
       
       // Ensure the time is within bounds
       const maxStartTime = endTime - draggedItem.duration;
@@ -132,8 +134,9 @@ const ScheduleGrid: React.FC<ScheduleGridProps> = ({
       
       console.log('Drop position:', {
         clientX: e.clientX,
-        rectLeft: rect.left,
         scrollLeft: gridRef.current?.scrollLeft || 0,
+        resourceColumnWidth,
+        timelineMouseX: e.clientX - resourceColumnWidth + (gridRef.current?.scrollLeft || 0),
         calculatedStart: minutesToTime(clampedStartMins),
         duration: draggedItem.duration
       });
