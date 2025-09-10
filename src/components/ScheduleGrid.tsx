@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { Employee, Appointment } from '@/types/schedule';
 import { timeToMinutes, minutesToTime } from '@/utils/timeUtils';
 import AppointmentBlock from './AppointmentBlock';
@@ -24,12 +24,22 @@ const ScheduleGrid: React.FC<ScheduleGridProps> = ({
   onAddAppointmentData
 }) => {
   const gridRef = useRef<HTMLDivElement>(null);
+  const [ghostPreview, setGhostPreview] = useState<{
+    show: boolean;
+    employeeId: string;
+    left: number;
+    width: number;
+    title: string;
+    duration: number;
+    rowIndex: number;
+  } | null>(null);
+  
   const startTime = 8 * 60; // 08:00 in minutes
   const endTime = 18 * 60; // 18:00 in minutes
   const timelineTotalWidth = 2000;
   const pixelsPerMinute = timelineTotalWidth / (endTime - startTime);
   const resourceColumnWidth = 240;
-  const rowHeight = 80;
+  const rowHeight = 130;
 
   const handleDragOver = (e: React.DragEvent, employeeId: string) => {
     e.preventDefault();
@@ -38,20 +48,58 @@ const ScheduleGrid: React.FC<ScheduleGridProps> = ({
     // Add visual feedback for drop zone
     const target = e.currentTarget as HTMLElement;
     target.classList.add('drag-over');
+    
+    // Show ghost preview
+    const data = e.dataTransfer.getData('application/json');
+    if (data) {
+      try {
+        const draggedItem = JSON.parse(data);
+        const rect = e.currentTarget.getBoundingClientRect();
+        const offsetX = e.clientX - rect.left + (gridRef.current?.scrollLeft || 0);
+        
+        // Calculate ghost position with snap
+        const timeStep = Math.max(15, timeScale);
+        const snapWidth = timeStep * pixelsPerMinute;
+        const adjustedOffsetX = Math.max(0, offsetX - 10);
+        const snappedLeft = Math.round(adjustedOffsetX / snapWidth) * snapWidth;
+        const width = draggedItem.duration * pixelsPerMinute;
+        
+        // Find employee row index
+        const rowIndex = employees.findIndex(emp => emp.id === employeeId);
+        
+        setGhostPreview({
+          show: true,
+          employeeId,
+          left: snappedLeft,
+          width: Math.max(width, 60), // Minimum width
+          title: draggedItem.title,
+          duration: draggedItem.duration,
+          rowIndex
+        });
+      } catch (error) {
+        // Ignore JSON parse errors
+      }
+    }
   };
 
   const handleDragLeave = (e: React.DragEvent) => {
     // Remove visual feedback when leaving drop zone
     const target = e.currentTarget as HTMLElement;
     target.classList.remove('drag-over');
+    
+    // Hide ghost preview when leaving the timeline area
+    if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+      setGhostPreview(null);
+    }
   };
 
   const handleDrop = (e: React.DragEvent, employeeId: string) => {
     e.preventDefault();
     
-    // Remove visual feedback
+    // Remove visual feedback and hide ghost
     const target = e.currentTarget as HTMLElement;
     target.classList.remove('drag-over');
+    setGhostPreview(null);
     
     const data = e.dataTransfer.getData('application/json');
     if (!data) return;
@@ -126,7 +174,7 @@ const ScheduleGrid: React.FC<ScheduleGridProps> = ({
         />
         
         {/* Employee rows */}
-        {employees.map((employee) => (
+        {employees.map((employee, index) => (
           <React.Fragment key={employee.id}>
             {/* Resource header */}
             <div className="sticky-column flex items-center p-4 h-[130px] bg-white border-b border-r border-border shadow-sm">
@@ -161,6 +209,29 @@ const ScheduleGrid: React.FC<ScheduleGridProps> = ({
                     onAddData={onAddAppointmentData}
                   />
                 ))}
+              
+              {/* Ghost Preview */}
+              {ghostPreview && ghostPreview.employeeId === employee.id && (
+                <div
+                  className="absolute top-[5px] h-[120px] rounded-lg border-2 border-dashed border-primary/50 bg-primary/10 backdrop-blur-sm z-[1] ghost-card"
+                  style={{
+                    left: `${ghostPreview.left}px`,
+                    width: `${ghostPreview.width}px`
+                  }}
+                >
+                  <div className="p-3 h-full flex flex-col justify-center">
+                    <div className="text-xs font-medium text-primary/80 truncate">
+                      📅 {ghostPreview.title}
+                    </div>
+                    <div className="text-[10px] text-primary/60 mt-1">
+                      ⏱️ {ghostPreview.duration} นาที
+                    </div>
+                    <div className="text-[10px] text-primary/50 mt-auto">
+                      วางที่นี่
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </React.Fragment>
         ))}

@@ -241,6 +241,22 @@
     filter: brightness(1.1);
     transition: none;
   }
+  
+  /* Ghost card animation */
+  .ghost-card {
+    animation: ghost-pulse 1.5s ease-in-out infinite;
+  }
+  
+  @keyframes ghost-pulse {
+    0%, 100% {
+      opacity: 0.6;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.8;
+      transform: scale(1.02);
+    }
+  }
 
   /* Current time indicator */
   .current-time-line {
